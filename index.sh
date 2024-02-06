@@ -11,7 +11,7 @@ install_python_3() {
   sudo dpkg -i python3.10_3.10.13-1_amd64.deb
   sudo apt install -f -y
   #检查是否安装成功
-  python --version
+  python3 --version
   echo "Python3.10.10已安装"
 }
 
@@ -39,6 +39,7 @@ install_openai_and_whisper() {
   pip3 install openai
   pip3 install openai-whisper
   echo "openai和whisper已安装"
+  echo "下一步：可以运行 python3 main.py 进行测试"
 }
 
 main() {
