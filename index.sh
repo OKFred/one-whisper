@@ -37,7 +37,7 @@ install_pytorch() {
 
 install_openai_and_whisper() {
   pip3 install openai
-  pip3 install whisper
+  pip3 install openai-whisper
   echo "openai和whisper已安装"
 }
 
