@@ -1,15 +1,5 @@
 #!/bin/bash
 
-main() {
-  install_python_3
-  install_pip
-  install_ffmpeg
-  install_pytorch
-  install_openai_and_whisper
-}
-
-main
-
 install_python_3() {
   sudo apt-get update
   sudo apt-get install build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev wget
@@ -49,3 +39,13 @@ install_openai_and_whisper() {
   pip3 install whisper
   echo "openai和whisper已安装"
 }
+
+main() {
+  install_python_3
+  install_pip
+  install_ffmpeg
+  install_pytorch
+  install_openai_and_whisper
+}
+
+main
