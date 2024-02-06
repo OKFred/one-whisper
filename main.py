@@ -1,6 +1,6 @@
 import whisper
 import os
-import time  # 导入time模块
+import time
 import warnings
 from openai import OpenAI
 
