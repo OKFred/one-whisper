@@ -1,4 +1,4 @@
-### @description: 用于 部署语音识别项目的 debian 系统初始化脚本
+### @description: 用于部署语音识别项目的 debian 系统初始化脚本
 
 ### @author: Fred Zhang Qi
 

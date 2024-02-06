@@ -1,8 +1,14 @@
 #!/bin/bash
+#@description: 用于部署语音识别项目的 debian 系统初始化脚本
+#@author: Fred Zhang Qi
+#@datetime: 2024-02-06
+
+#文件依赖
+#⚠️import--需要引入包含函数的文件
 
 install_python_3() {
-  sudo apt-get update
-  sudo apt-get install build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev wget
+  sudo apt update
+  sudo apt install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev wget
   wget https://www.python.org/ftp/python/3.10.10/Python-3.10.10.tgz
   tar -xf Python-3.10.10.tgz
   cd Python-3.10.10
@@ -15,12 +21,12 @@ install_python_3() {
 }
 
 install_pip() {
-  sudo apt-get install python3-pip
+  sudo apt install -y python3-pip
   echo "pip已安装"
 }
 
 install_ffmpeg() {
-  sudo apt-get install ffmpeg
+  sudo apt install -y ffmpeg
   echo "ffmpeg已安装"
 }
 
