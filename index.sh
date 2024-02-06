@@ -7,16 +7,11 @@
 #⚠️import--需要引入包含函数的文件
 
 install_python_3() {
-  sudo apt update
-  sudo apt install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev wget
-  wget https://www.python.org/ftp/python/3.10.10/Python-3.10.10.tgz
-  tar -xf Python-3.10.10.tgz
-  cd Python-3.10.10
-  ./configure --enable-optimizations
-  make
-  sudo make install
-  cd ..
-  sudo rm -rf Python-3.10.10
+  wget http://ftp.cn.debian.org/debian/pool/main/p/python3.10/python3.10_3.10.13-1_amd64.deb
+  sudo dpkg -i python3.10_3.10.13-1_amd64.deb
+  sudo apt install -f
+  #检查是否安装成功
+  python --version
   echo "Python3.10.10已安装"
 }
 
