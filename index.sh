@@ -9,7 +9,7 @@
 install_python_3() {
   wget http://ftp.cn.debian.org/debian/pool/main/p/python3.10/python3.10_3.10.13-1_amd64.deb
   sudo dpkg -i python3.10_3.10.13-1_amd64.deb
-  sudo apt install -f
+  sudo apt install -f -y
   #检查是否安装成功
   python --version
   echo "Python3.10.10已安装"
