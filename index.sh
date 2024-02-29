@@ -42,17 +42,12 @@ installer() {
 }
 
 uninstall_old_python() {
-  #检查是否安装了python3.11及以上的版本
   local version=$(python3 --version | awk '{print $2}')
-  #如果当前版本大于等于3.11，则清理
   if [ -z $version ]; then
     echo "未安装python3"
     return 0
   fi
-  if [ $version -ge 3.11 ]; then
-    echo "删除python3.11及以上的版本"
-    apt purge 'python3*' -y
-  fi
+  apt purge 'python3*' -y
   echo "请清理残留（若有）"
   local lines=($(dpkg -l | grep "^ii" | grep python3 | awk '{print $2}'))
   for line in ${lines[@]}; do
