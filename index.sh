@@ -10,10 +10,13 @@ install_python_3() {
   uninstall_old_python
   local base_url=http://ftp.cn.debian.org/debian/pool/main/p/python3.10/
   local package_name
-  package_name=python3.10-minimal
+  package_name=python3.10-minimal_3.10.13-1_amd64.deb
   downloader $package_name $base_url
   installer $package_name
-  package_name=libpython3.10-stdlib
+  package_name=libpython3.10-minimal_3.10.13-1_amd64.deb
+  downloader $package_name $base_url
+  installer $package_name
+  package_name=libpython3.10-stdlib_3.10.13-1_amd64.deb
   downloader $package_name $base_url
   installer $package_name
   package_name=python3.10_3.10.13-1_amd64.deb
