@@ -7,21 +7,45 @@
 #⚠️import--需要引入包含函数的文件
 
 install_python_3() {
+  uninstall_old_python
   wget http://ftp.cn.debian.org/debian/pool/main/p/python3.10/python3.10_3.10.13-1_amd64.deb
-  sudo dpkg -i python3.10_3.10.13-1_amd64.deb
-  sudo apt install -f -y
-  #检查是否安装成功
+  dpkg -i python3.10_3.10.13-1_amd64.deb
+  apt install -f -y
+  echo "检查Python3.10是否安装成功"
   python3 --version
-  echo "Python3.10.10已安装"
+}
+
+uninstall_old_python() {
+  #检查是否安装了python3.11及以上的版本
+  local version=$(python3 --version | awk '{print $2}')
+  #如果当前版本大于等于3.11，则清理
+  if [ -z $version ]; then
+    echo "未安装python3"
+    return 0
+  fi
+  if [ $version -ge 3.11 ]; then
+    echo "删除python3.11及以上的版本"
+    apt purge 'python3*' -y
+  fi
+  echo "请清理残留（若有）"
+  local lines=($(dpkg -l | grep "^ii" | grep python3 | awk '{print $2}'))
+  for line in ${lines[@]}; do
+    echo "删除"$line
+    apt purge $line -y
+  done
+  apt autoremove -y
+  echo "删除python的外部管理，方便安装pip"
+  rm /usr/lib/python$version/EXTERNALLY-MANAGED
+  echo "旧版本python已卸载"
 }
 
 install_pip() {
-  sudo apt install -y python3-pip
+  apt install -y python3-pip
   echo "pip已安装"
 }
 
 install_ffmpeg() {
-  sudo apt install -y ffmpeg
+  apt install -y ffmpeg
   echo "ffmpeg已安装"
 }
 
