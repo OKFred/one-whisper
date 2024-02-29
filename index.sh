@@ -7,52 +7,15 @@
 #⚠️import--需要引入包含函数的文件
 
 install_python_3() {
-  uninstall_old_python
-  apt update
-  apt install software-properties-common
-  add-apt-repository ppa:deadsnakes/ppa
-  apt update
-  apt install python3.10
-  echo "检查Python3.10是否安装成功"
-  python3.10 --version
-
-}
-
-downloader() {
-  package_name=$1
-  $base_url=$2
-  if [ -f $package_name ]; then
-    echo "已下载"$package_name
-  else
-    echo "下载"$package_name
-    wget $base_url$package_name
-  fi
-}
-
-installer() {
-  package_name=$1
-  echo "安装"$package_name
-  dpkg -i $package_name
-  apt install -y
-}
-
-uninstall_old_python() {
   local version=$(python3 --version | awk '{print $2}')
   if [ -z $version ]; then
     echo "未安装python3"
     return 0
   fi
-  apt purge 'python3*' -y
-  echo "请清理残留（若有）"
-  local lines=($(dpkg -l | grep "^ii" | grep python3 | awk '{print $2}'))
-  for line in ${lines[@]}; do
-    echo "删除"$line
-    apt purge $line -y
-  done
   apt autoremove -y
+  apt install -y python3
   echo "删除python的外部管理，方便安装pip"
   rm /usr/lib/python$version/EXTERNALLY-MANAGED
-  echo "旧版本python已卸载"
 }
 
 install_pip() {
