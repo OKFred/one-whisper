@@ -8,26 +8,14 @@
 
 install_python_3() {
   uninstall_old_python
-  local base_url
-  local package_name
-  base_url=http://ftp.cn.debian.org/debian/pool/main/p/python3.10/
-  package_name=libpython3.10-minimal_3.10.13-1_amd64.deb
-  downloader $package_name $base_url
-  installer $package_name
-  base_url=http://ftp.cn.debian.org/debian/pool/main/p/python3.10/
-  package_name=libpython3.10-stdlib_3.10.13-1_amd64.deb
-  downloader $package_name $base_url
-  installer $package_name
-  base_url=http://ftp.cn.debian.org/debian/pool/main/p/python3.10/
-  package_name=python3.10-minimal_3.10.13-1_amd64.deb
-  downloader $package_name $base_url
-  installer $package_name
-  base_url=http://ftp.cn.debian.org/debian/pool/main/p/python3.10/
-  package_name=python3.10_3.10.13-1_amd64.deb
-  downloader $package_name $base_url
-  installer $package_name
+  apt update
+  apt install software-properties-common
+  add-apt-repository ppa:deadsnakes/ppa
+  apt update
+  apt install python3.10
   echo "检查Python3.10是否安装成功"
-  python3 --version
+  python3.10 --version
+
 }
 
 downloader() {
