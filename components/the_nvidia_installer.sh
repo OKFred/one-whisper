@@ -9,7 +9,7 @@
 
 check_hardware() {
   #检查硬件
-  let has_pciutils=$(which lspci)
+  local has_pciutils=$(which lspci)
   if [ $has_pciutils == "" ]; then
     apt install pciutils -y
   fi
@@ -18,19 +18,9 @@ check_hardware() {
 }
 
 check_nvidia_module() {
-  #检查nvidia模块
-  local result=$(lsmod | grep nvidia)
-  if [ $result == "" ]; then
-    echo "nvidia模块未加载"
-  else
-    echo "nvidia模块已加载"
-  fi
-  result=$(lsof | grep nvidia)
-  if [ $result == "" ]; then
-    echo "nvidia模块未被占用"
-  else
-    echo "nvidia模块已被占用"
-  fi
+  echo "检查nvidia模块"
+  lsmod | grep nvidia
+  lsof | grep nvidia
 }
 
 install_nvidia_driver() {
@@ -64,7 +54,7 @@ install_cuda() {
   apt install nvidia-cuda-toolkit -y
 }
 
-the_nvidia_installer(){
+the_nvidia_installer() {
   check_hardware
   check_nvidia_module
   install_nvidia_driver
