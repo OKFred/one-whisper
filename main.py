@@ -107,7 +107,7 @@ def main():
     for i in range(len(sys.argv)):
       if sys.argv[i] == "debug":
         is_debug = True
-      if sys.argv[i] == "file=":
+      if sys.argv[i].startswith("file"):
         audio_path = sys.argv[i].split('=')[1]
       if sys.argv[i] == "fast":
         is_fast_mode = True
