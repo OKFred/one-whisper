@@ -16,6 +16,7 @@ install_python_3() {
     echo "https://github.com/openai/whisper?tab=readme-ov-file#setup"
   fi
   apt install -y python3
+  version=$(python3 --version | awk '{print $2}' | awk -v FS="." '{print $1 "." $2}')
   echo "删除python的外部管理，方便安装pip"
   rm /usr/lib/python$version/EXTERNALLY-MANAGED
 }
