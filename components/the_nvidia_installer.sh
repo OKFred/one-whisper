@@ -19,7 +19,7 @@ check_hardware() {
   local result=$(ls -l /dev/nvidia* /dev/dri/* /dev/fb0)
   echo $result
   local error_case=$(echo $result | grep "No such file or directory")
-  if [ $error_case != "" ]; then
+  if [[ -n $error_case ]]; then
     echo "显卡未被识别"
     return 1
   fi
