@@ -8,7 +8,7 @@
 
 `cd $HOME && git clone https://github.com/OKFred/one-whisper`
 
-`cd $HOME/one-whisper && chmod +x index.sh && ./index.sh`
+`cd $HOME/one-whisper && chmod +x menu.sh && ./menu.sh`
 
 #### 菜单预览
 1. NVIDIA显卡驱动安装
