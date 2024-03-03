@@ -112,7 +112,7 @@ def main():
   transcribe_audio(audio_path, is_fast_mode)
 
   # 在脚本末尾添加
-  input("按回车键退出...")
+  #input("按回车键退出...")
 
 main()
 
