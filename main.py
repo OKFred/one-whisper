@@ -99,7 +99,7 @@ def summarize_text(text):
 def main(): 
 # 读取传参，是否有提到debug
   is_debug = False
-  is_fast_mode = True
+  is_fast_mode = False
   audio_path = ''
   
   
@@ -110,7 +110,7 @@ def main():
       if sys.argv[i] == "file=":
         audio_path = sys.argv[i].split('=')[1]
       if sys.argv[i] == "fast":
-        is_fast_mode = False
+        is_fast_mode = True
   if is_debug == False:
     warnings.filterwarnings("ignore")
   transcribe_audio(audio_path, is_fast_mode)
