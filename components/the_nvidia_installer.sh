@@ -15,6 +15,14 @@ check_hardware() {
   fi
   echo "是否存在英伟达显卡？"
   lspci | grep -i nvidia
+  echo "显卡是否被识别？"
+  local result=$(ls -l /dev/nvidia* /dev/dri/* /dev/fb0)
+  echo $result
+  local error_case=$(echo $result | grep "No such file or directory")
+  if [ $error_case != "" ]; then
+    echo "显卡未被识别"
+    return 1
+  fi
 }
 
 check_nvidia_module() {
@@ -61,6 +69,10 @@ install_cuda() {
 
 the_nvidia_installer() {
   check_hardware
+  if [ $? -eq 1 ]; then
+    echo "未检测到英伟达显卡，退出安装"
+    return 1
+  fi
   check_nvidia_module
   # install_nvidia_driver
   install_cuda
