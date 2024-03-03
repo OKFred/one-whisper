@@ -51,12 +51,10 @@ install_openai_and_whisper() {
   fi
 }
 
-main() {
+whisper_installer() {
   install_python_3
   install_pip
   install_ffmpeg
   install_pytorch
   install_openai_and_whisper
 }
-
-main
