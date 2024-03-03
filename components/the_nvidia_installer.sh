@@ -52,10 +52,10 @@ unistall_nvidia_driver() {
   #卸载英伟达显卡驱动
   local file_name="NVIDIA-Linux-x86_64-550.54.14.run" #发布日期:	2024.2.23
   ./$file_name --uninstall
-  apt remove nvidia-driver
-  apt --purge remove "*cuda*" "*cublas*" "*cufft*" "*cufile*" "*curand*" "*cusolver*" "*cusparse*" "*gds-tools*" "*npp*" "*nvjpeg*" "nsight*" "*nvvm*"
-  apt --purge remove "*nvidia*" "libxnvctrl*"
-  apt autoremove
+  apt remove nvidia-driver -y
+  apt --purge remove "*cuda*" "*cublas*" "*cufft*" "*cufile*" "*curand*" "*cusolver*" "*cusparse*" "*gds-tools*" "*npp*" "*nvjpeg*" "nsight*" "*nvvm*" -y
+  apt --purge remove "*nvidia*" "libxnvctrl*" -y
+  apt autoremove -y
   echo "卸载完成"
 }
 
