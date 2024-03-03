@@ -1,27 +1,28 @@
 import whisper
 import os
 import time
+import sys
 import warnings
 from openai import OpenAI
 
-# 抑制所有警告
-warnings.filterwarnings("ignore")
-
-def transcribe_audio():
+def transcribe_audio(audio_path, is_fast_mode):
   # 询问用户选择哪个模型
-  model_size = 'small'
-  model_size_index = input("默认快速模式。是否需要精确模式？ (y/n)")
-  if model_size_index not in ['y', 'n']:
-    print("使用默认值(n)")
-  elif model_size_index == 'y':
-    print("将使用精确模式")
+  model_size = ''
+  if is_fast_mode:
+    model_size = 'small'
+  else:
+    print("将使用中等模型，以获得更好的识别结果。")
     model_size = 'medium'
   # 加载模型
   model = whisper.load_model(model_size)
   
   while True:
     # 提示用户输入路径
-    audio_path = input("请输入音频文件的路径：").strip('"')  # 自动删除前后的双引号
+    if audio_path:
+      print("使用传参的音频文件的路径：", audio_path)
+    else:
+      audio_path = input("请输入音频文件的路径：")
+    audio_path = audio_path.strip('"')  # 自动删除前后的双引号
     
     # 检查文件是否存在
     if os.path.exists(audio_path):
@@ -92,8 +93,31 @@ def summarize_text(text):
     print(f"生成摘要时发生错误：{e}")
     return "无法生成摘要。"
 
-# 调用函数
-transcribe_audio()
+# 主程序
 
-# 在脚本末尾添加
-input("按回车键退出...")
+# 抑制所有警告
+def main(): 
+# 读取传参，是否有提到debug
+  is_debug = False
+  is_fast_mode = True
+  audio_path = ''
+  
+  
+  if len(sys.argv):
+    for i in range(len(sys.argv)):
+      if sys.argv[i] == "debug":
+        is_debug = True
+      if sys.argv[i] == "audio_path":
+        audio_path = sys.argv[i+1]
+      if sys.argv[i] == "fast":
+        is_fast_mode = False
+  if is_debug == False:
+    warnings.filterwarnings("ignore")
+  transcribe_audio(audio_path, is_fast_mode)
+
+  # 在脚本末尾添加
+  input("按回车键退出...")
+
+main()
+
+# debian下运行示例： python3 main.py audio_path /root/test.m4a debug fast
