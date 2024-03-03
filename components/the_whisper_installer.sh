@@ -51,7 +51,7 @@ install_openai_and_whisper() {
   fi
 }
 
-whisper_installer() {
+the_whisper_installer() {
   install_python_3
   install_pip
   install_ffmpeg

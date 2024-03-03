@@ -64,7 +64,7 @@ install_cuda() {
   apt install nvidia-cuda-toolkit -y
 }
 
-nvidia_installer(){
+the_nvidia_installer(){
   check_hardware
   check_nvidia_module
   install_nvidia_driver
