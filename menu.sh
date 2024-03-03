@@ -30,6 +30,7 @@ main() {
     echo "02. lxc gpu passthrough--LXC容器显卡直通"
     echo "03. whisper installer--语音转文字whisper安装"
     echo "04. transcribe audio--语音转换"
+    echo "05. uninstall nvidia driver--卸载NVIDIA显卡驱动"
     echo "08. more--更多"
     echo "09. about--关于"
     echo "00. exit--退出"
@@ -41,6 +42,7 @@ main() {
     02 | 2) the_lxc_gpu_passthrough ;;
     03 | 3) the_whisper_installer ;;
     04 | 4) python3 main.py ;;
+    05 | 5) unistall_nvidia_driver ;;
     08 | 8) echo 'wait and see--敬请期待' ;;
     09 | 9) nano readme.md ;;
     00 | 0 | "") exit 1 ;;
