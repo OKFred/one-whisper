@@ -46,7 +46,7 @@ install_openai_and_whisper() {
   echo "openai和whisper已安装"
   echo "下一步：可以运行 python3 main.py 进行测试"
   read -p "下载测试音频？(y/n)" download_audio
-  if [ $download_audio = "y" ]; then
+  if [[ $download_audio = "y" ]]; then
     wget https://cdn.openai.com/whisper/draft-20220913a/younha.wav
   fi
 }

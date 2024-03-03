@@ -60,8 +60,8 @@ unistall_nvidia_driver() {
 }
 
 install_cuda() {
-  # apt install nvidia-driver -y
-  # apt install nvidia-modprobe -y
+  apt install nvidia-driver -y
+  apt install nvidia-modprobe -y
   apt install nvidia-cuda-toolkit -y
   echo "安装完成，检查命令是否可用"
   nvidia-smi
@@ -74,6 +74,6 @@ the_nvidia_installer() {
     return 1
   fi
   check_nvidia_module
-  install_nvidia_driver
+  # install_nvidia_driver
   install_cuda
 }
