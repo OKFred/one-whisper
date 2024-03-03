@@ -54,11 +54,11 @@ unistall_nvidia_driver() {
   if [ -f $file_name ]; then
     ./$file_name --uninstall
   fi
-  modprobe -r nvidia nvidia_drm nvidia_modeset nvidia_uvm
   apt remove nvidia-driver -y
   apt --purge remove "*cuda*" "*cublas*" "*cufft*" "*cufile*" "*curand*" "*cusolver*" "*cusparse*" "*gds-tools*" "*npp*" "*nvjpeg*" "nsight*" "*nvvm*" -y
   apt --purge remove "*nvidia*" "libxnvctrl*" -y
   apt autoremove -y
+  modprobe -r nvidia nvidia_drm nvidia_modeset nvidia_uvm
   echo "卸载完成"
   echo "建议重启系统"
 }
