@@ -37,8 +37,7 @@ install_nvidia_driver() {
   else
     ./"$file_name"
   fi
-  echo "安装完成，检查命令是否可用"
-  nvidia-smi
+  echo "已安装驱动"
 }
 
 unistall_nvidia_driver() {
@@ -55,6 +54,8 @@ unistall_nvidia_driver() {
 install_cuda() {
   apt install nvidia-modprobe -y
   apt install nvidia-cuda-toolkit -y
+  echo "安装完成，检查命令是否可用"
+  nvidia-smi
 }
 
 the_nvidia_installer() {
