@@ -61,4 +61,5 @@ the_nvidia_installer() {
   check_hardware
   check_nvidia_module
   install_nvidia_driver
+  install_cuda
 }
