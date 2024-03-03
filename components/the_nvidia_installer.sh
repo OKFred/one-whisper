@@ -13,8 +13,8 @@ check_hardware() {
   if [ $has_pciutils == "" ]; then
     apt install pciutils -y
   fi
+  echo "是否存在英伟达显卡？"
   lspci | grep -i nvidia
-  echo "检查完成"
 }
 
 check_nvidia_module() {
@@ -26,7 +26,9 @@ check_nvidia_module() {
 install_nvidia_driver() {
   #安装英伟达显卡驱动
   local file_name="NVIDIA-Linux-x86_64-550.54.14.run" #发布日期:	2024.2.23
-  wget https://cn.download.nvidia.com/XFree86/Linux-x86_64/550.54.14/$file_name
+  if [ ! -f $file_name ]; then
+    wget https://cn.download.nvidia.com/XFree86/Linux-x86_64/550.54.14/$file_name
+  fi
   chmod +x $file_name
   read -p "是否需要核心模块？(y/n) (LXC一般不需要)" need_kernel_module
   if [ $need_kernel_module == "y" ]; then
