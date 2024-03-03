@@ -59,6 +59,10 @@ unistall_nvidia_driver() {
   apt --purge remove "*nvidia*" "libxnvctrl*" -y
   apt autoremove -y
   modprobe -r nvidia nvidia_drm nvidia_modeset nvidia_uvm
+  # 检查/etc/X11/xorg.conf
+  if [ grep "Driver *\"nvidia\"" /etc/X11/xorg.conf ]; then
+      sed -i 's/Driver *\"nvidia\"/#&/' /etc/X11/xorg.conf
+  fi
   echo "卸载完成"
   echo "建议重启系统"
 }
