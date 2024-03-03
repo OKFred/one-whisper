@@ -27,6 +27,7 @@ the_lxc_gpu_passthrough() {
     echo "lxc.apparmor.profile: unconfined
 lxc.cgroup.devices.allow: a
 lxc.cap.drop: 
+lxc.cgroup2.devices.allow: c 29:* rwm
 lxc.cgroup2.devices.allow: c 195:* rwm
 lxc.cgroup2.devices.allow: c 511:* rwm
 lxc.cgroup2.devices.allow: c 236:* rwm

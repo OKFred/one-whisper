@@ -81,6 +81,6 @@ the_nvidia_installer() {
     return 1
   fi
   check_nvidia_module
-  install_nvidia_driver
   install_cuda
+  install_nvidia_driver
 }

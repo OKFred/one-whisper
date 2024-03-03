@@ -1,7 +1,7 @@
 import whisper
 import os
 import time
-import sys
+import argparse
 import warnings
 from openai import OpenAI
 
@@ -24,7 +24,10 @@ def transcribe_audio(audio_path, is_fast_mode):
   audio_path = audio_path.strip('"')  # 自动删除前后的双引号
   
   # 检查文件是否存在
-  if os.path.exists(audio_path):
+  if os.path.exists(audio_path) == False:
+    print("文件不存在。")
+    return
+  else:
     print("正在处理中，请稍等...")
     start_time = time.time()  # 开始计时
     # 运行语音识别
@@ -98,17 +101,21 @@ def main():
   is_fast_mode = False
   audio_path = ''
   
-  
-  if len(sys.argv):
-    for i in range(len(sys.argv)):
-      if sys.argv[i] == "debug":
-        is_debug = True
-      if sys.argv[i].startswith("file"):
-        audio_path = sys.argv[i].split('=')[1]
-      if sys.argv[i] == "fast":
-        is_fast_mode = True
+  parser = argparse.ArgumentParser(description="语音识别", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+  parser.add_argument("--file", type=str, help="音频文件的路径")
+  parser.add_argument("--fast", action="store_true", help="是否使用快速模式")
+  parser.add_argument("--debug", action="store_true", help="是否使用调试模式")
+  args = parser.parse_args()
+  print(args)
+  if args.file:
+    audio_path = args.file
+  if args.fast:
+    is_fast_mode = True
+  if args.debug:
+    is_debug = True
   if is_debug == False:
     warnings.filterwarnings("ignore")
+  # 开始识别音频
   transcribe_audio(audio_path, is_fast_mode)
 
   # 在脚本末尾添加
@@ -116,4 +123,4 @@ def main():
 
 main()
 
-# debian下运行示例： python3 main.py file="/root/test.m4a" fast debug
+# debian下运行示例： python3 main.py --file "/root/test.m4a" --fast --debug
