@@ -31,10 +31,11 @@ install_nvidia_driver() {
   fi
   chmod +x $file_name
   read -p "是否需要核心模块？(y/n) (LXC一般不需要)" need_kernel_module
-  if [ $need_kernel_module == "y" ]; then
-    ./$file_name
-  else
+  if [ -z $need_kernel_module || $need_kernel_module = "n" ]; then
+    echo "选择了不需要核心模块"
     ./$file_name --no-kernel-module
+  else
+    ./$file_name
   fi
   echo "安装完成，检查命令是否可用"
   nvidia-smi
