@@ -10,7 +10,7 @@
 check_hardware() {
   #检查硬件
   local has_pciutils=$(which lspci)
-  if [ $has_pciutils == "" ]; then
+  if [[ -n $has_pciutils ]]; then
     apt install pciutils -y
   fi
   echo "是否存在英伟达显卡？"
