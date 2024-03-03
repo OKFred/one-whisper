@@ -64,6 +64,10 @@ unistall_nvidia_driver() {
   fi
   echo "卸载完成"
   echo "建议重启系统"
+  read -p "是否需要重启？(y/n)" need_reboot
+  if [[ $need_reboot == "y" ]]; then
+    reboot
+  fi
 }
 
 install_cuda() {
@@ -82,5 +86,6 @@ the_nvidia_installer() {
   fi
   check_nvidia_module
   install_cuda
+  unistall_nvidia_driver
   install_nvidia_driver
 }
