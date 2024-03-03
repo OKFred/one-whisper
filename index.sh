@@ -5,14 +5,16 @@
 
 #文件依赖
 #⚠️import--需要引入包含函数的文件
+#none
 
 install_python_3() {
-  local version=$(python3 --version | awk '{print $2}')
-  if [ -z $version ]; then
-    echo "未安装python3"
-    return 0
+  # 获取Python版本，并提取主要版本号
+  local version=$(python3 --version | awk '{print $2}' | awk -v FS="." '{print $1$2}')
+  # 检查主要版本号是否大于311
+  if [ "$version" -gt 311 ]; then
+    echo "版本大于3.11，可能不兼容openAI-whisper，敬请留意"
+    echo "https://github.com/openai/whisper?tab=readme-ov-file#setup"
   fi
-  apt autoremove -y
   apt install -y python3
   echo "删除python的外部管理，方便安装pip"
   rm /usr/lib/python$version/EXTERNALLY-MANAGED
@@ -43,6 +45,10 @@ install_openai_and_whisper() {
   pip3 install openai-whisper
   echo "openai和whisper已安装"
   echo "下一步：可以运行 python3 main.py 进行测试"
+  read -p "下载测试音频？(y/n)" download_audio
+  if [ $download_audio = "y" ]; then
+    wget https://cdn.openai.com/whisper/draft-20220913a/younha.wav
+  fi
 }
 
 main() {
