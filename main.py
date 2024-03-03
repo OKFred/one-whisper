@@ -107,8 +107,8 @@ def main():
     for i in range(len(sys.argv)):
       if sys.argv[i] == "debug":
         is_debug = True
-      if sys.argv[i] == "audio_path":
-        audio_path = sys.argv[i+1]
+      if sys.argv[i] == "file=":
+        audio_path = sys.argv[i].split('=')[1]
       if sys.argv[i] == "fast":
         is_fast_mode = False
   if is_debug == False:
@@ -120,4 +120,4 @@ def main():
 
 main()
 
-# debian下运行示例： python3 main.py audio_path /root/test.m4a debug fast
+# debian下运行示例： python3 main.py file="test.mp3" fast
