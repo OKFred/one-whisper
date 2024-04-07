@@ -6,7 +6,7 @@
 #文件依赖
 #⚠️import--需要引入包含函数的文件
 #none
-nvidia_server="https://cn.download.nvidia.com/XFree86/Linux-x86_64"
+nvidia_server="https://download.nvidia.com/XFree86/Linux-x86_64"
 
 check_hardware() {
   #检查硬件
@@ -28,7 +28,8 @@ check_hardware() {
 
 get_latest_version() {
   #获取最新版本
-  local latest_version=$(curl -s $nvidia_server/latest.txt)
+  local latest_version_str=$(curl -s $nvidia_server/latest.txt)
+  local latest_version=$(echo $latest_version_str | awk '{print $2}')
   echo $latest_version
 }
 
