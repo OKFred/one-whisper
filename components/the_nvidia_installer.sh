@@ -97,10 +97,7 @@ the_nvidia_installer() {
     return 1
   fi
   check_hardware
-  if [[ $? -ne 0 ]]; then
-    install_cuda
-    # install_nvidia_driver
-  fi
+  install_cuda
   check_nvidia_module
   # unistall_nvidia_driver
 }
