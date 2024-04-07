@@ -6,6 +6,7 @@
 #文件依赖
 #⚠️import--需要引入包含函数的文件
 #none
+nvidia_server="https://cn.download.nvidia.com/XFree86/Linux-x86_64"
 
 check_hardware() {
   #检查硬件
@@ -25,6 +26,12 @@ check_hardware() {
   fi
 }
 
+get_latest_version() {
+  #获取最新版本
+  local latest_version=$(curl -s $nvidia_server/latest.txt)
+  echo $latest_version
+}
+
 check_nvidia_module() {
   echo "检查nvidia模块"
   lsmod | grep nvidia
@@ -33,9 +40,11 @@ check_nvidia_module() {
 
 install_nvidia_driver() {
   #安装英伟达显卡驱动
-  local file_name="NVIDIA-Linux-x86_64-550.54.14.run" #发布日期:	2024.2.23
+  local latest_version=$(get_latest_version)
+  local file_name=$(echo $latest_version | awk -F'/' '{print $NF}')
+  echo "当前最新版本为：$latest_version"
   if [ ! -f $file_name ]; then
-    wget https://cn.download.nvidia.com/XFree86/Linux-x86_64/550.54.14/$file_name
+    wget $nvidia_server/$latest_version
   fi
   chmod +x $file_name
   read -p "是否需要核心模块？(y/n) (LXC一般不需要)" need_kernel_module
@@ -50,7 +59,8 @@ install_nvidia_driver() {
 
 unistall_nvidia_driver() {
   #卸载英伟达显卡驱动
-  local file_name="NVIDIA-Linux-x86_64-550.54.14.run" #发布日期:	2024.2.23
+  local latest_version=$(get_latest_version)
+  local file_name=$(echo $latest_version | awk -F'/' '{print $NF}')
   if [ -f $file_name ]; then
     ./$file_name --uninstall
   fi
