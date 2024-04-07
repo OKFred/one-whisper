@@ -9,13 +9,6 @@
 nvidia_server="https://download.nvidia.com/XFree86/Linux-x86_64"
 
 check_hardware() {
-  #检查硬件
-  local has_pciutils=$(which lspci)
-  if [[ $has_pciutil=="" ]]; then
-    apt install pciutils -y
-  fi
-  echo "是否存在英伟达显卡？"
-  lspci | grep -i nvidia
   echo "显卡是否被识别？"
   local result=$(ls -l /dev/nvidia* /dev/dri/* /dev/fb0)
   echo $result
@@ -26,17 +19,17 @@ check_hardware() {
   fi
 }
 
+check_nvidia_module() {
+  echo "检查nvidia模块"
+  lsmod | grep nvidia
+  lsof | grep nvidia
+}
+
 get_latest_version() {
   #获取最新版本
   local latest_version_str=$(curl -s $nvidia_server/latest.txt)
   local latest_version=$(echo $latest_version_str | awk '{print $2}')
   echo $latest_version
-}
-
-check_nvidia_module() {
-  echo "检查nvidia模块"
-  lsmod | grep nvidia
-  lsof | grep nvidia
 }
 
 install_nvidia_driver() {
@@ -82,7 +75,7 @@ unistall_nvidia_driver() {
 }
 
 install_cuda() {
-  # apt install nvidia-driver -y
+  apt install nvidia-driver -y
   # apt install nvidia-modprobe -y
   apt install nvidia-cuda-toolkit -y
   echo "安装完成，检查命令是否可用"
@@ -90,13 +83,24 @@ install_cuda() {
 }
 
 the_nvidia_installer() {
-  check_hardware
-  if [ $? -eq 1 ]; then
-    echo "未检测到英伟达显卡，退出安装"
+  #检查硬件
+  apt update
+  local has_pciutils=$(which lspci)
+  if [[ $has_pciutil=="" ]]; then
+    apt install pciutils -y
+  fi
+  echo "是否存在英伟达显卡？"
+  local has_nvidia=$(lspci | grep -i nvidia)
+  echo $has_nvidia
+  if [[ -z $has_nvidia ]]; then
+    echo "不存在英伟达显卡"
     return 1
   fi
+  check_hardware
+  if [[ $? -ne 0 ]]; then
+    install_cuda
+    # install_nvidia_driver
+  fi
   check_nvidia_module
-  install_cuda
-  unistall_nvidia_driver
-  install_nvidia_driver
+  # unistall_nvidia_driver
 }
