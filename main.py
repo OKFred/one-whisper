@@ -3,76 +3,81 @@ import os
 import time
 import argparse
 import warnings
+import subprocess  # 用于调用ffmpeg
 from openai import OpenAI
 
 def transcribe_audio(audio_path, is_fast_mode):
-  # 询问用户选择哪个模型
-  model_size = ''
-  if is_fast_mode:
-    model_size = 'small'
-  else:
-    print("将使用中等模型，以获得更好的识别结果。")
-    model_size = 'medium'
-  # 加载模型
+  model_size = 'small' if is_fast_mode else 'medium'
+  print("将使用" + ("小型模型，速度较快。" if is_fast_mode else "中等模型，以获得更好的识别结果。"))
   model = whisper.load_model(model_size)
   
-  # 提示用户输入路径
-  if audio_path:
-    print("使用传参的音频文件的路径：", audio_path)
-  else:
-    audio_path = input("请输入音频文件的路径：")
-  audio_path = audio_path.strip('"')  # 自动删除前后的双引号
-  
-  # 检查文件是否存在
-  if os.path.exists(audio_path) == False:
+  if not audio_path:
+    audio_path = input("请输入音视频文件的路径：").strip('"')
+
+  if not os.path.exists(audio_path):
     print("文件不存在。")
     return
   else:
     print("正在处理中，请稍等...")
-    start_time = time.time()  # 开始计时
-    # 运行语音识别
+    start_time = time.time()
     result = model.transcribe(audio_path)
-    end_time = time.time()  # 结束计时
+    end_time = time.time()
     print(f"语音识别耗时：{end_time - start_time:.2f}秒")
-    output_test = '' # 保存输出结果
-    print("\n识别结果：")
+
+    output_text = ''
+    output_srt = ''
+    counter = 1
     for segment in result["segments"]:
-      #start 和 end 保留1位小数
-      segment['start'] = round(segment['start'], 1)
-      segment['end'] = round(segment['end'], 1)
-      print(f"{segment['start']}-{segment['end']}：{segment['text']}")
-      output_test += f"{segment['start']}-{segment['end']}：{segment['text']}\n"
-    # 询问用户是否需要概括内容
-    need_summary = input("是否需要概括内容？(y/n)")
-    if need_summary not in ['y', 'n']:
-      print("使用默认值(n)")
-    elif need_summary == 'y':
-      print("正在概括...")
-      summaries = summarize_text(result["text"])
-      output_test += f"\n\n概括：\n{summaries}"
-      print(summaries)
-    # 保存输出结果到文件，文件名为音频文件名+“_识别结果.txt”
-    file_name = os.path.basename(audio_path) + "_识别结果.txt"
-    with open(file_name, "w", encoding="utf-8") as f:
-      f.write(output_test)
-    print(f"结果已保存到 {file_name}")
+      start = round(segment['start'], 1)
+      end = round(segment['end'], 1)
+      text_segment = f"{start}-{end}：{segment['text']}"
+      print(text_segment)
+      output_text += text_segment + "\n"
+      # SRT segment
+      srt_start = convert_to_srt_time(start)
+      srt_end = convert_to_srt_time(end)
+      output_srt += f"{counter}\n{srt_start} --> {srt_end}\n{segment['text']}\n\n"
+      counter += 1
+
+    text_file_name = os.path.basename(audio_path) + "_识别结果.txt"
+    srt_file_name = os.path.basename(audio_path) + "_识别结果.srt"
+    with open(text_file_name, "w", encoding="utf-8") as f:
+      f.write(output_text)
+    with open(srt_file_name, "w", encoding="utf-8") as f:
+      f.write(output_srt)
+    print(f"结果已保存到 {text_file_name} 和 {srt_file_name}")
+    if audio_path.lower().endswith('.mp4'):
+        subtitle_video(audio_path, srt_file_name)
+
+
+def convert_to_srt_time(seconds):
+  hours = int(seconds // 3600)
+  minutes = int((seconds % 3600) // 60)
+  seconds = seconds % 60
+  milliseconds = int((seconds - int(seconds)) * 1000)
+  return f"{hours:02}:{minutes:02}:{int(seconds):02},{milliseconds:03}"
+
+
+def subtitle_video(video_path, srt_path):
+    user_input = input("是否需要将字幕合成到视频文件中？(y/n): ")
+    if user_input.lower() == 'y':
+        font_color = input("请输入字体颜色(如 0080FF) 或按回车使用默认值 (白色): ")
+        font_size = input("请输入字体大小(如 18) 或按回车使用默认值 (18): ")
+        font_color = font_color if font_color else 'FFFFFF'  # 默认白色
+        font_size = font_size if font_size else '18'           # 默认大小18
+        output_video_path = os.path.splitext(video_path)[0] + "_带字幕.mp4"
+        command = [
+            'ffmpeg', '-i', video_path, '-vf', 
+            f"subtitles={srt_path}:force_style='Fontsize={font_size},FontName=Calibri,PrimaryColour=&H{font_color}'", output_video_path
+        ]
+        subprocess.run(command, check=True)
+        print(f"带字幕的视频已保存到 {output_video_path}")
 
 def summarize_text(text):
-  """
-  使用 OpenAI GPT-4 来总结文本，适用于 openai>=1.0.0。
-  """
   api_key = input("请输入openAI的密钥(api_key): ")
   if not api_key:
-      print("未输入api_key。")
-      # 这里可以添加更多的处理代码，例如提示用户重新输入或退出程序等
       return "无法生成摘要。"
-  else:
-      print("已输入api_key：", api_key)
-      # 继续处理api_key
-  client = OpenAI(
-    api_key=api_key,
-  )
-
+  client = OpenAI(api_key=api_key)
   try:
     chat_completion = client.chat.completions.create(
       model="gpt-4-1106-preview",
@@ -93,34 +98,14 @@ def summarize_text(text):
     return "无法生成摘要。"
 
 # 主程序
-
-# 抑制所有警告
 def main(): 
-# 读取传参，是否有提到debug
-  is_debug = False
-  is_fast_mode = False
-  audio_path = ''
-  
   parser = argparse.ArgumentParser(description="语音识别", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
   parser.add_argument("--file", type=str, help="音频文件的路径")
   parser.add_argument("--fast", action="store_true", help="是否使用快速模式")
   parser.add_argument("--debug", action="store_true", help="是否使用调试模式")
   args = parser.parse_args()
-  print(args)
-  if args.file:
-    audio_path = args.file
-  if args.fast:
-    is_fast_mode = True
   if args.debug:
-    is_debug = True
-  if is_debug == False:
     warnings.filterwarnings("ignore")
-  # 开始识别音频
-  transcribe_audio(audio_path, is_fast_mode)
-
-  # 在脚本末尾添加
-  #input("按回车键退出...")
+  transcribe_audio(args.file, args.fast)
 
 main()
-
-# debian下运行示例： python3 main.py --file "/root/test.m4a" --fast --debug
