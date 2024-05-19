@@ -25,30 +25,36 @@ check_nvidia_module() {
   lsof | grep nvidia
 }
 
+check_nouveau_and_block() {
+  echo "blacklist nouveau
+options nouveau modeset=0
+" >/etc/modprobe.d/blacklist-nouveau.conf
+  lsmod | grep nouveau
+  dpkg -l | grep nouveau
+  # 检查是否加载了 nouveau 模块
+  if lsmod | grep -q nouveau; then
+    echo "nouveau 模块已加载。需要重启系统以应用更改。"
+    read -p "现在重启系统吗？ (y/n): " choice
+    case "$choice" in
+    y | Y)
+      echo "重启系统..."
+      sudo update-initramfs -u
+      sudo reboot
+      ;;
+    *)
+      echo "请记得手动重启系统以应用更改。"
+      ;;
+    esac
+  else
+    echo "nouveau 模块未加载。不需要重启。"
+  fi
+}
+
 get_latest_version() {
   #获取最新版本
   local latest_version_str=$(curl -s $nvidia_server/latest.txt)
   local latest_version=$(echo $latest_version_str | awk '{print $2}')
   echo $latest_version
-}
-
-install_nvidia_driver() {
-  #安装英伟达显卡驱动
-  local latest_version=$(get_latest_version)
-  local file_name=$(echo $latest_version | awk -F'/' '{print $NF}')
-  echo "当前最新版本为：$latest_version"
-  if [ ! -f $file_name ]; then
-    wget $nvidia_server/$latest_version
-  fi
-  chmod +x $file_name
-  read -p "是否需要核心模块？(y/n) (LXC一般不需要)" need_kernel_module
-  # 回车默认为n
-  if [ -z "$need_kernel_module" ] || [ "$need_kernel_module" = "n" ]; then
-    ./"$file_name" --no-kernel-module
-  else
-    ./"$file_name"
-  fi
-  echo "已安装驱动"
 }
 
 unistall_nvidia_driver() {
@@ -74,7 +80,7 @@ unistall_nvidia_driver() {
   fi
 }
 
-install_cuda() {
+install_driver_and_cuda() {
   apt install nvidia-driver -y
   # apt install nvidia-modprobe -y
   apt install nvidia-cuda-toolkit -y
@@ -97,7 +103,8 @@ the_nvidia_installer() {
     return 1
   fi
   check_hardware
-  install_cuda
+  check_nouveau_and_block
+  install_driver_and_cuda
   check_nvidia_module
   # unistall_nvidia_driver
 }
